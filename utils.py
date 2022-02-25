@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 import numpy as np
+import math
 from collections import defaultdict
 
 def readStataDct(dct_file, **options):
@@ -186,3 +187,43 @@ def confidenceInterval(unique,cdf,ps=None):
     intervalMin = np.searchsorted(cdf, prob, side='left')
     intervalMax = np.searchsorted(cdf, 1 - prob, side='left')
     return unique[intervalMin],unique[intervalMax]
+    
+def var(xs, mu=None, ddof=0):
+    xs = np.asarray(xs)
+
+    if mu is None:
+        mu = xs.mean()
+
+    ds = xs - mu
+    return np.dot(ds, ds) / (len(xs) - ddof)    
+    
+def meanVar(xs, ddof=0):
+    xs = np.asarray(xs)
+    mean = xs.mean()
+    s2 = var(xs, mean, ddof)
+    return mean, s2    
+    
+    
+def cov(xs, ys, meanx=None, meany=None):
+    xs = np.asarray(xs)
+    ys = np.asarray(ys)
+
+    if meanx is None:
+        meanx = np.mean(xs)
+    if meany is None:
+        meany = np.mean(ys)
+
+    cov = np.dot(xs-meanx, ys-meany) / len(xs)
+    return cov
+
+
+def corr(xs, ys):
+    xs = np.asarray(xs)
+    ys = np.asarray(ys)
+
+    meanx, varx = meanVar(xs)
+    meany, vary = meanVar(ys)
+
+    corr = cov(xs, ys, meanx, meany) / math.sqrt(varx * vary)
+
+    return corr
