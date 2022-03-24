@@ -1,8 +1,83 @@
-import re
-import pandas as pd
-import numpy as np
 import math
+import re
 from collections import defaultdict
+
+import numpy as np
+import pandas as pd
+from cycler import cycler
+import matplotlib.pyplot as plt
+
+Gray20 = (0.162, 0.162, 0.162, 0.7)
+Gray30 = (0.262, 0.262, 0.262, 0.7)
+Gray40 = (0.355, 0.355, 0.355, 0.7)
+Gray50 = (0.44, 0.44, 0.44, 0.7)
+Gray60 = (0.539, 0.539, 0.539, 0.7)
+Gray70 = (0.643, 0.643, 0.643, 0.7)
+Gray80 = (0.757, 0.757, 0.757, 0.7)
+Pu20 = (0.247, 0.0, 0.49, 0.7)
+Pu30 = (0.327, 0.149, 0.559, 0.7)
+Pu40 = (0.395, 0.278, 0.62, 0.7)
+Pu50 = (0.46, 0.406, 0.685, 0.7)
+Pu60 = (0.529, 0.517, 0.742, 0.7)
+Pu70 = (0.636, 0.623, 0.795, 0.7)
+Pu80 = (0.743, 0.747, 0.866, 0.7)
+Bl20 = (0.031, 0.188, 0.42, 0.7)
+Bl30 = (0.031, 0.265, 0.534, 0.7)
+Bl40 = (0.069, 0.365, 0.649, 0.7)
+Bl50 = (0.159, 0.473, 0.725, 0.7)
+Bl60 = (0.271, 0.581, 0.781, 0.7)
+Bl70 = (0.417, 0.681, 0.838, 0.7)
+Bl80 = (0.617, 0.791, 0.882, 0.7)
+Gr20 = (0.0, 0.267, 0.106, 0.7)
+Gr30 = (0.0, 0.312, 0.125, 0.7)
+Gr40 = (0.001, 0.428, 0.173, 0.7)
+Gr50 = (0.112, 0.524, 0.253, 0.7)
+Gr60 = (0.219, 0.633, 0.336, 0.7)
+Gr70 = (0.376, 0.73, 0.424, 0.7)
+Gr80 = (0.574, 0.824, 0.561, 0.7)
+Or20 = (0.498, 0.153, 0.016, 0.7)
+Or30 = (0.498, 0.153, 0.016, 0.7)
+Or40 = (0.599, 0.192, 0.013, 0.7)
+Or50 = (0.746, 0.245, 0.008, 0.7)
+Or60 = (0.887, 0.332, 0.031, 0.7)
+Or70 = (0.966, 0.475, 0.147, 0.7)
+Or80 = (0.992, 0.661, 0.389, 0.7)
+Re20 = (0.404, 0.0, 0.051, 0.7)
+Re30 = (0.495, 0.022, 0.063, 0.7)
+Re40 = (0.662, 0.062, 0.085, 0.7)
+Re50 = (0.806, 0.104, 0.118, 0.7)
+Re60 = (0.939, 0.239, 0.178, 0.7)
+Re70 = (0.985, 0.448, 0.322, 0.7)
+Re80 = (0.988, 0.646, 0.532, 0.7)
+
+color_list = [Bl30, Or70, Gr50, Re60, Pu20, Gray70, Re80, Gray50, 
+              Gr70, Bl50, Re40, Pu70, Or50, Gr30, Bl70, Pu50, Gray30]
+color_cycle = cycler(color=color_list)
+
+def set_pyplot_params():
+    plt.rcParams['axes.prop_cycle'] = color_cycle
+    plt.rcParams['lines.linewidth'] = 3
+
+
+def decorate(**options):
+    """Decorate the current axes.
+    
+    Call decorate with keyword arguments like
+    decorate(title='Title',
+             xlabel='x',
+             ylabel='y')
+             
+    The keyword arguments can be any of the axis properties
+    https://matplotlib.org/api/axes_api.html
+    """
+    ax = plt.gca()
+    ax.set(**options)
+    
+    handles, labels = ax.get_legend_handles_labels()
+    if handles:
+        ax.legend(handles, labels)
+
+    plt.tight_layout()
 
 def readStataDct(dct_file, **options):
     type_map = dict(byte=int, int=int, long=int, float=float, 
