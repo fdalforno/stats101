@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from scipy.interpolate import interp1d
+from scipy.stats import binom
 
 def underride(d, **options):
     """Aggiunge il valore a d solo se key non è presente in d.
@@ -732,3 +733,13 @@ class Cdf(Distribution):
         """
         ps = 1 - (1 - self)**n
         return Cdf(ps, self.index.copy())
+        
+def make_binomial(n, p):
+    """Make a binomial distribution.
+    n: number of trials
+    p: probability of success
+    returns: Pmf representing the distribution of k
+    """
+    ks = np.arange(n+1)
+    ps = binom.pmf(ks, n, p)
+    return Pmf(ps, ks)
