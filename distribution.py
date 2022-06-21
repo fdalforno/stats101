@@ -743,3 +743,16 @@ def make_binomial(n, p):
     ks = np.arange(n+1)
     ps = binom.pmf(ks, n, p)
     return Pmf(ps, ks)
+    
+def make_mixture(pmf, pmf_seq):
+    """Make a mixture of distributions.
+    pmf: mapping from each hypothesis to its probability
+         (or it can be a sequence of probabilities)
+    pmf_seq: sequence of Pmfs, each representing
+             a conditional distribution for one hypothesis
+    returns: Pmf representing the mixture
+    """
+    df = pd.DataFrame(pmf_seq).fillna(0).transpose()
+    df *= np.array(pmf)
+    total = df.sum(axis=1)
+    return Pmf(total)

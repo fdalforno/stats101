@@ -7,6 +7,8 @@ import pandas as pd
 from cycler import cycler
 import matplotlib.pyplot as plt
 
+from distribution import Pmf
+
 Gray20 = (0.162, 0.162, 0.162, 0.7)
 Gray30 = (0.262, 0.262, 0.262, 0.7)
 Gray40 = (0.355, 0.355, 0.355, 0.7)
@@ -302,3 +304,16 @@ def corr(xs, ys):
     corr = cov(xs, ys, meanx, meany) / math.sqrt(varx * vary)
 
     return corr
+    
+    
+def make_die(sides):
+    outcomes = np.arange(1, sides+1)
+    die = Pmf(1/sides, outcomes)
+    return die
+    
+def add_dist_seq(seq):
+    """Compute Pmf of the sum of values from seq."""
+    total = seq[0]
+    for other in seq[1:]:
+        total = total.add_dist(other)
+    return total
