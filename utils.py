@@ -317,3 +317,48 @@ def add_dist_seq(seq):
     for other in seq[1:]:
         total = total.add_dist(other)
     return total
+
+def make_joint(s1, s2):
+    """Compute the outer product of two Series.
+    First Series goes across the columns;
+    second goes down the rows.
+    s1: Series
+    s2: Series
+    return: DataFrame
+    """
+    X, Y = np.meshgrid(s1, s2)
+    return pd.DataFrame(X*Y, columns=s1.index, index=s2.index)
+
+def underride(d, **options):
+    """Add key-value pairs to d only if key is not in d.
+    d: dictionary
+    options: keyword args to add to d
+    """
+    for key, val in options.items():
+        d.setdefault(key, val)
+
+    return d
+
+
+def plot_contour(joint, **options):
+    """Plot a joint distribution.
+    joint: DataFrame representing a joint PMF
+    """
+    low = joint.to_numpy().min()
+    high = joint.to_numpy().max()
+    levels = np.linspace(low, high, 6)
+    levels = levels[1:]
+
+    underride(options, levels=levels, linewidths=1)
+    cs = plt.contour(joint.columns, joint.index, joint, **options)
+    decorate(xlabel=joint.columns.name,
+             ylabel=joint.index.name)
+    return cs
+
+def normalize(joint):
+    """Normalize a joint distribution.
+    joint: DataFrame
+    """
+    prob_data = joint.to_numpy().sum()
+    joint /= prob_data
+    return prob_data
